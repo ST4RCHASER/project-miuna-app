@@ -1,1 +1,1 @@
-String miunaURL = "http://localhost:3000/";
+String miunaURL = "http://miuna.local:3000/v1";

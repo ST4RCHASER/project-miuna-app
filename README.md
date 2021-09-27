@@ -1,4 +1,4 @@
-# flutter_application_1
+# Project miuna (CODENAME)
 
 A new Flutter project.
 

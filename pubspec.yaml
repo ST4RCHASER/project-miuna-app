@@ -31,11 +31,17 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_svg: ^0.22.0
   http: ^0.13.3
+  flutter_secure_storage: ^4.2.1
 
 dev_dependencies:
+  #To build icon: flutter pub run flutter_launcher_icons:main 
+  flutter_launcher_icons: "any"
   flutter_test:
     sdk: flutter
-
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/icons/app.png"
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
