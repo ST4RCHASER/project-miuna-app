@@ -33,10 +33,11 @@ Future<RESTResp> authenticateAccount(String email, String password) async {
           'Failed to connect to server, please check your internet connection',
       'statusCode': -1
     });
-  } catch (e) {
+  }
+   catch (e) {
     print(e);
     return RESTResp(
-        {'success': false, 'message': 'Unknown error!', 'statusCode': -1});
+        {'success': false, 'message': 'Unknown error: ' + e, 'statusCode': -1});
   }
 }
 

@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
         print(snapshot.data);
         widget = MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Miuna Auth',
+        title: 'Miuna Check-in',
         theme: ThemeData(
           primaryColor: kPrimaryColor,
           scaffoldBackgroundColor: Colors.white,

@@ -39,7 +39,7 @@ class Body extends StatelessWidget {
                   if (usernameController.text == null ||
                       usernameController.text.length < 1)
                     return 'Please enter your username';
-                    if (passwordController.text.length < 5)return 'Username must be at least 5 characters';
+                    if (usernameController.text.length < 5)return 'Username must be at least 5 characters';
                   return null;
                 }),
             SquareInputField(

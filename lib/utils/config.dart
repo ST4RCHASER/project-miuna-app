@@ -1,1 +1,1 @@
-String miunaURL = "http://miuna.local:3000/v1";
+String miunaURL = "https://miuna.starchaser.me/v1/";
