@@ -5,6 +5,7 @@ import 'package:project_miuna/components/head_text.dart';
 import 'package:project_miuna/utils/rest.dart' as rest;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:project_miuna/components/square_button.dart';
+import 'package:niku/niku.dart';
 
 final KVStorage = new FlutterSecureStorage();
 
@@ -21,6 +22,11 @@ class Body extends StatelessWidget {
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
             ),
           ),
+          NikuText("Here we go it's niku")
+              .color(Colors.deepPurple)
+              .fontSize(21)
+              .niku() // <--- Compose Parent Widget
+              .p(20),
           SquareButton(
             text: "Logout",
             press: () {
