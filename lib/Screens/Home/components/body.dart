@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:project_miuna/Screens/Home/components/background.dart';
+import 'package:project_miuna/Screens/Home/components/event_card.dart';
 import 'package:project_miuna/Screens/Home/components/menu_button.dart';
 import 'package:project_miuna/Screens/Home/home_screen.dart';
 import 'package:project_miuna/Screens/Welcome/welcome_screen.dart';
@@ -25,17 +26,14 @@ class Body extends StatelessWidget {
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 35),
             ),
           ),
-          ThematicText(text: 'Join new event', top: 0),
-          MenuButton(text: 'JOIN EVENT', color: Colors.green,textColor: Colors.white, press: () {}),
+          ThematicText(text: 'Join or leave event', top: 0),
+          MenuButton(text: 'SCAN NOW', color: Colors.green,textColor: Colors.white, press: () {}),
           ThematicText(text: 'Event management'),
           MenuButton(text: 'CREATE NEW', press: () {}),
           MenuButton(text: 'MY EVENTS', press: () {}),
           ThematicText(text: 'Current entry event'),
-          NikuText("Here we go it's niku")
-              .color(Colors.deepPurple)
-              .fontSize(21)
-              .niku() // <--- Compose  Parent Widget
-              .p(20),
+          EventCard(),
+          ThematicText(text: 'Dev zone'),
           SquareButton(
             text: "Logout",
             press: () {
