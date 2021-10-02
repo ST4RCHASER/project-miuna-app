@@ -25,12 +25,12 @@ class Body extends StatelessWidget {
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 35),
             ),
           ),
-          ThematicText(text: 'Join new event'),
+          ThematicText(text: 'Join new event', top: 0),
           MenuButton(text: 'JOIN EVENT', color: Colors.green,textColor: Colors.white, press: () {}),
           ThematicText(text: 'Event management'),
           MenuButton(text: 'CREATE NEW', press: () {}),
           MenuButton(text: 'MY EVENTS', press: () {}),
-          ThematicText(text: 'Your current entry event'),
+          ThematicText(text: 'Current entry event'),
           NikuText("Here we go it's niku")
               .color(Colors.deepPurple)
               .fontSize(21)
