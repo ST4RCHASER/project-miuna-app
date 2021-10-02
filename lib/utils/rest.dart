@@ -23,6 +23,7 @@ Future<RESTResp> authenticateAccount(String email, String password) async {
           "username": email,
           "password": password
         }));
+        print(resp.body);
     var decoded = convert.jsonDecode(resp.body);
     var body = RESTResp(decoded);
     return body;
