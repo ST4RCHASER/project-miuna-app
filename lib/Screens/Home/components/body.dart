@@ -32,7 +32,7 @@ class Body extends StatelessWidget {
           MenuButton(text: 'CREATE NEW', press: () {}),
           MenuButton(text: 'MY EVENTS', press: () {}),
           ThematicText(text: 'Current entry event'),
-          EventCard(),
+          EventCard(startTime: DateTime.now().millisecondsSinceEpoch),
           ThematicText(text: 'Dev zone'),
           SquareButton(
             text: "Logout",

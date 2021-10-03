@@ -24,13 +24,19 @@ class MenuButton extends StatelessWidget {
           width: size.width * 0.85,
           child: ClipRRect(
             child: FlatButton(
-              padding: EdgeInsets.symmetric(vertical: 15, horizontal: 25),
-              color: color,
-              onPressed: press,
-              child: Align(
-                  child: NikuText(text).fontSize(30).color(textColor),
-                  alignment: Alignment.topLeft),
-            ),
+                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 25),
+                color: color,
+                onPressed: press,
+                child: Container(
+                  // decoration: BoxDecoration(
+                  //   image: DecorationImage(
+                  //       image: AssetImage('assets/icons/scan.png'),
+                  //       fit: BoxFit.cover),
+                  // ),
+                  child: Align(
+                      child: NikuText(text).fontSize(30).color(textColor),
+                      alignment: Alignment.topLeft),
+                )),
           ),
         ));
   }
