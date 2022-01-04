@@ -3,6 +3,7 @@ import 'package:project_miuna/Screens/Home/components/background.dart';
 import 'package:project_miuna/Screens/Home/components/event_card.dart';
 import 'package:project_miuna/Screens/Home/components/menu_button.dart';
 import 'package:project_miuna/Screens/Home/home_screen.dart';
+import 'package:project_miuna/Screens/QRScan/qrscan_screen.dart';
 import 'package:project_miuna/Screens/Welcome/welcome_screen.dart';
 import 'package:project_miuna/components/head_text.dart';
 import 'package:project_miuna/components/thematic_text.dart';
@@ -27,7 +28,16 @@ class Body extends StatelessWidget {
             ),
           ),
           ThematicText(text: 'Join or leave event', top: 0),
-          MenuButton(text: 'SCAN NOW', color: Colors.green,textColor: Colors.white, press: () {}),
+          MenuButton(text: 'SCAN NOW', color: Colors.green,textColor: Colors.white, press: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return QRScanScreen();
+                    },
+                  ),
+                );
+              },),
           ThematicText(text: 'Event management'),
           MenuButton(text: 'CREATE NEW', press: () {}),
           MenuButton(text: 'MY EVENTS', press: () {}),
