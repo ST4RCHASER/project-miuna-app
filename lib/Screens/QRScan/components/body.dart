@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:project_miuna/Screens/Home/components/background.dart';
 import 'package:project_miuna/Screens/Home/components/event_card.dart';
 import 'package:project_miuna/Screens/Home/components/menu_button.dart';
+import 'package:project_miuna/Screens/ScanResult/scan_result.dart';
 import 'package:project_miuna/Screens/Welcome/welcome_screen.dart';
 import 'package:project_miuna/components/head_text.dart';
 import 'package:project_miuna/components/thematic_text.dart';
@@ -102,23 +103,54 @@ class _QRViewExampleState extends State<Body> {
     });
     controller.scannedDataStream.listen((scanData) {
       controller.pauseCamera();
-      showDialog(
+      if(scanData.code.length != 24) {
+        //Show invalid QR code dialog
+        showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text("Scan Result"),
-              content: Text(scanData.code),
+              title: Text("Invalid QR Code"),
+              content: Text("Please scan a valid QR code"),
               actions: <Widget>[
                 FlatButton(
                   child: Text("Close"),
                   onPressed: () {
-                    controller.resumeCamera();
                     Navigator.of(context).pop();
+                    controller.resumeCamera();
                   },
                 )
               ],
             );
-          });
+          },
+        );
+      }else {
+        //Open ScanResult page
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ScanResult(
+              scanData,
+            ),
+          ),
+        );
+      }
+      // showDialog(
+      //     context: context,
+      //     builder: (BuildContext context) {
+      //       return AlertDialog(
+      //         title: Text("Scan Result"),
+      //         content: Text(scanData.code),
+      //         actions: <Widget>[
+      //           FlatButton(
+      //             child: Text("Close"),
+      //             onPressed: () {
+      //               controller.resumeCamera();
+      //               Navigator.of(context).pop();
+      //             },
+      //           )
+      //         ],
+      //       );
+      //     });
       setState(() {
         result = scanData;
       });

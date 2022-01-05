@@ -15,6 +15,7 @@ import 'package:niku/niku.dart';
 final KVStorage = new FlutterSecureStorage();
 
 class Body extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return Background(
@@ -38,7 +39,7 @@ class Body extends StatelessWidget {
                   ),
                 );
               },),
-          ThematicText(text: 'Event management'),
+          ThematicText(text: 'Event management (Remove soon)'),
           MenuButton(text: 'CREATE NEW', press: () {}),
           MenuButton(text: 'MY EVENTS', press: () {}),
           ThematicText(text: 'Current entry event'),

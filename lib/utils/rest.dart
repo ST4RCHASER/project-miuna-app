@@ -42,6 +42,38 @@ Future<RESTResp> authenticateAccount(String email, String password) async {
   }
 }
 
+Future<RESTResp> getEventInfo(String id) async {
+  try {
+    var token = await KVStorage.read(key: "token");
+    print('Current Auth Token:');
+    print(token);
+    if(token == null) token = '';
+    http.Response resp = await http.get(
+        Uri.parse(config.miunaURL + "event/info/" + id),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer ' + token
+        });
+        print(resp.body);
+    var decoded = convert.jsonDecode(resp.body);
+    print(decoded);
+    var body = RESTResp(decoded);
+    return body;
+  } on SocketException {
+    return RESTResp({
+      'success': false,
+      'message':
+          'Failed to connect to server, please check your internet connection',
+      'statusCode': -1
+    });
+  }
+   catch (e) {
+    print(e);
+    return RESTResp(
+        {'success': false, 'message': 'Unknown error: ' + e, 'statusCode': -1});
+  }
+}
+
 Future<RESTResp> registerNewAccount(
     String email, String username, String password) async {
   try {
