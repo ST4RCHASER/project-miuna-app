@@ -19,6 +19,38 @@ import 'dart:io' as IO;
 
 final KVStorage = new FlutterSecureStorage();
 
+class LifecycleEventHandler extends WidgetsBindingObserver {
+  final AsyncCallback resumeCallBack;
+  final AsyncCallback suspendingCallBack;
+  final AsyncCallback stateChangeCallBack;
+
+  LifecycleEventHandler({
+    this.resumeCallBack,
+    this.suspendingCallBack,
+    this.stateChangeCallBack,
+  });
+
+  @override
+  Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
+    await stateChangeCallBack();
+    print('State change to $state');
+    switch (state) {
+      case AppLifecycleState.resumed:
+        if (resumeCallBack != null) {
+          await resumeCallBack();
+        }
+        break;
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.paused:
+      case AppLifecycleState.detached:
+        if (suspendingCallBack != null) {
+          await suspendingCallBack();
+        }
+        break;
+    }
+  }
+}
+
 class Body extends StatefulWidget {
   const Body({Key key}) : super(key: key);
 
@@ -40,6 +72,18 @@ class _QRViewExampleState extends State<Body> {
       controller.pauseCamera();
     }
     controller.resumeCamera();
+  }
+
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(LifecycleEventHandler(
+        resumeCallBack: () async => setState(() {
+              this.controller.resumeCamera();
+            })));
+    WidgetsBinding.instance.addObserver(LifecycleEventHandler(
+        stateChangeCallBack: () async => setState(() {
+              this.controller.resumeCamera();
+            })));
   }
 
   @override
@@ -78,10 +122,10 @@ class _QRViewExampleState extends State<Body> {
             MediaQuery.of(context).size.height < 400)
         ? 150.0
         : 300.0;
-        // var scanArea = (MediaQuery.of(context).size.width < 400 ||
-        //     MediaQuery.of(context).size.height < 400)
-        // ? 150.0
-        // : 300.0;
+    // var scanArea = (MediaQuery.of(context).size.width < 400 ||
+    //     MediaQuery.of(context).size.height < 400)
+    // ? 150.0
+    // : 300.0;
     // To ensure the Scanner view is properly sizes after rotation
     // we need to listen for Flutter SizeChanged notification and update controller
     return QRView(
@@ -102,8 +146,9 @@ class _QRViewExampleState extends State<Body> {
       this.controller = controller;
     });
     controller.scannedDataStream.listen((scanData) {
+      if (result != null) return;
       controller.pauseCamera();
-      if(scanData.code.length != 24) {
+      if (scanData.code.length != 24) {
         //Show invalid QR code dialog
         showDialog(
           context: context,
@@ -117,22 +162,36 @@ class _QRViewExampleState extends State<Body> {
                   onPressed: () {
                     Navigator.of(context).pop();
                     controller.resumeCamera();
+                    setState(() {
+                      result = null;
+                    });
                   },
                 )
               ],
             );
           },
         );
-      }else {
+      } else {
         //Open ScanResult page
+        controller.resumeCamera();
+        setState(() {
+          result = null;
+        });
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ScanResult(
-              scanData,
-            ),
+            builder: (context) => ScanResult(scanData, controller),
           ),
-        );
+        ).then((value) {
+          controller.resumeCamera();
+          setState(() {
+            result = value;
+          });
+        });
+        controller.resumeCamera();
+        setState(() {
+          result = null;
+        });
       }
       // showDialog(
       //     context: context,

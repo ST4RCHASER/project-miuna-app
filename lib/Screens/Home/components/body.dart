@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:project_miuna/Screens/Home/components/background.dart';
 import 'package:project_miuna/Screens/Home/components/event_card.dart';
@@ -15,7 +17,6 @@ import 'package:niku/niku.dart';
 final KVStorage = new FlutterSecureStorage();
 
 class Body extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return Background(
@@ -29,21 +30,41 @@ class Body extends StatelessWidget {
             ),
           ),
           ThematicText(text: 'Join or leave event', top: 0),
-          MenuButton(text: 'SCAN NOW', color: Colors.green,textColor: Colors.white, press: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return QRScanScreen();
-                    },
-                  ),
-                );
-              },),
+          MenuButton(
+            text: 'SCAN NOW',
+            color: Colors.green,
+            textColor: Colors.white,
+            press: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return QRScanScreen();
+                  },
+                ),
+              );
+            },
+          ),
           ThematicText(text: 'Event management (Remove soon)'),
           MenuButton(text: 'CREATE NEW', press: () {}),
           MenuButton(text: 'MY EVENTS', press: () {}),
           ThematicText(text: 'Current entry event'),
-          EventCard(startTime: DateTime.now().millisecondsSinceEpoch),
+          FutureBuilder(
+              future: rest.getJoinedEventList(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Column(children: [
+                    for (var i in snapshot.data.content) EventCard(
+                      startTime: DateTime.parse(i.record.timeJoin).millisecondsSinceEpoch,
+                      name: i.event.name,
+                      creator: i.eventOwner.username,
+                      eventID: i.event.sId,
+                      recordID: i.record.sId,
+                      ),
+                  ]);
+                }
+                return Container();
+              }),
           ThematicText(text: 'Dev zone'),
           SquareButton(
             text: "Logout",
