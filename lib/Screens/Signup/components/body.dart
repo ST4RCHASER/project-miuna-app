@@ -2,15 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:project_miuna/Screens/Login/login_screen.dart';
 import 'package:project_miuna/Screens/Signup/components/background.dart';
 import 'package:project_miuna/components/already_have_an_account_acheck.dart';
+import 'package:project_miuna/components/drop_list_model.dart';
+import 'package:project_miuna/components/select_drop_list.dart';
 import 'package:project_miuna/components/square_button.dart';
 import 'package:project_miuna/components/square_input_field.dart';
 import 'package:project_miuna/components/square_password_field.dart';
 import 'package:project_miuna/components/sub_head_text.dart';
 import 'package:project_miuna/components/head_text.dart';
+import 'package:project_miuna/components/text_field_container.dart';
 import 'package:project_miuna/utils/rest.dart' as rest;
 import 'package:project_miuna/main.dart' as app;
 
-class Body extends StatelessWidget {
+class BodyStateing extends StatefulWidget {
+  @override
+  Body createState() => Body();
+}
+
+class Body extends State<BodyStateing> {
   GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
   TextEditingController usernameController = new TextEditingController();
   TextEditingController passwordController = new TextEditingController();
@@ -19,6 +27,16 @@ class Body extends StatelessWidget {
   TextEditingController nameController = new TextEditingController();
   TextEditingController secController = new TextEditingController();
   TextEditingController studentIDController = new TextEditingController();
+  DropListModel dropListModel = new DropListModel([
+    OptionItem(id: "1", title: 'เทคโนโลยีมัลติมีเดีย'),
+    OptionItem(id: "2", title: 'เทคโนโลยีสารสนเทศ'),
+    OptionItem(id: "3", title: 'นวัตกรรมวัสดุเพื่ออุตสาหกรรม'),
+    OptionItem(id: "4", title: 'วิทยาการการจัดการข้อมูล'),
+    OptionItem(id: "5", title: 'วิทยาการคอมพิวเตอร์'),
+    OptionItem(id: "6", title: 'เทคโนโลยีดิจิทัลมีเดีย'),
+  ]);
+  OptionItem optionItemSelected =
+      new OptionItem(id: "1", title: 'เทคโนโลยีมัลติมีเดีย');
   @override
   Widget build(BuildContext context) {
     return Background(
@@ -96,6 +114,16 @@ class Body extends StatelessWidget {
                     return 'Name and surname must be at least 10 characters';
                   return null;
                 }),
+            TextFieldContainer(
+              child: SelectDropList(
+                this.optionItemSelected,
+                this.dropListModel,
+                (optionItem) {
+                  optionItemSelected = optionItem;
+                  this.setState(() {});
+                },
+              ),
+            ),
             SquareInputField(
                 hintText: "SEC Group",
                 onChanged: (value) {},
@@ -125,8 +153,14 @@ class Body extends StatelessWidget {
               press: () {
                 if (_formKey.currentState.validate()) {
                   rest
-                      .registerNewAccount(emailController.text,
-                          usernameController.text, passwordController.text, nameController.text, secController.text, studentIDController.text)
+                      .registerNewAccount(
+                          emailController.text,
+                          usernameController.text,
+                          passwordController.text,
+                          nameController.text,
+                          secController.text,
+                          studentIDController.text,
+                          optionItemSelected.title)
                       .then((result) => {
                             if (result.success)
                               {

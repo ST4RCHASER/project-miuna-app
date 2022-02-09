@@ -5,7 +5,7 @@ import 'package:project_miuna/Screens/Welcome/components/background.dart';
 import 'package:project_miuna/components/square_button.dart';
 import 'package:project_miuna/constants.dart';
 import 'package:flutter_svg/svg.dart';
-
+import 'package:image/image.dart';
 class Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,8 @@ class Body extends StatelessWidget {
             ),
             SizedBox(height: size.height * 0.05),
             SvgPicture.asset(
-              "assets/icons/chat.svg",
+              // "assets/icons/chat.svg",
+              "assets/icons/chat2.svg",
               height: size.height * 0.45,
             ),
             SizedBox(height: size.height * 0.05),
