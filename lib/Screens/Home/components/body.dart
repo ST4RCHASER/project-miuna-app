@@ -45,9 +45,9 @@ class Body extends StatelessWidget {
               );
             },
           ),
-          ThematicText(text: 'Event management (Remove soon)'),
-          MenuButton(text: 'CREATE NEW', press: () {}),
-          MenuButton(text: 'MY EVENTS', press: () {}),
+          // ThematicText(text: 'Event management (Remove soon)'),
+          // MenuButton(text: 'CREATE NEW', press: () {}),
+          // MenuButton(text: 'MY EVENTS', press: () {}),
           ThematicText(text: 'Current entry event'),
           FutureBuilder(
               future: rest.getJoinedEventList(),

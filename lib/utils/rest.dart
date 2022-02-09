@@ -164,7 +164,7 @@ Future<RESTResp> getEventInfo(String id) async {
 }
 
 Future<RESTResp> registerNewAccount(
-    String email, String username, String password) async {
+    String email, String username, String password, String name, String sec, String student_id) async {
   try {
     http.Response resp = await http.post(
         Uri.parse(config.miunaURL + "account/reg"),
@@ -174,7 +174,10 @@ Future<RESTResp> registerNewAccount(
         body: convert.jsonEncode(<String, String>{
           "email": email,
           "username": username,
-          "password": password
+          "password": password,
+          "name": name,
+          "sec": sec,
+          "student_id": student_id
         }));
     var decoded = convert.jsonDecode(resp.body);
     var body = RESTResp(decoded);

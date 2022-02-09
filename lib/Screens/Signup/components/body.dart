@@ -16,6 +16,9 @@ class Body extends StatelessWidget {
   TextEditingController passwordController = new TextEditingController();
   TextEditingController cfmPasswordController = new TextEditingController();
   TextEditingController emailController = new TextEditingController();
+  TextEditingController nameController = new TextEditingController();
+  TextEditingController secController = new TextEditingController();
+  TextEditingController studentIDController = new TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Background(
@@ -39,7 +42,8 @@ class Body extends StatelessWidget {
                   if (usernameController.text == null ||
                       usernameController.text.length < 1)
                     return 'Please enter your username';
-                    if (usernameController.text.length < 5)return 'Username must be at least 5 characters';
+                  if (usernameController.text.length < 5)
+                    return 'Username must be at least 5 characters';
                   return null;
                 }),
             SquareInputField(
@@ -64,7 +68,8 @@ class Body extends StatelessWidget {
                   if (passwordController.text == null ||
                       passwordController.text.length < 1)
                     return 'Please enter your password';
-                  if (passwordController.text.length < 6)return 'Password must be at least 6 characters';
+                  if (passwordController.text.length < 6)
+                    return 'Password must be at least 6 characters';
                   return null;
                 }),
             SquarePasswordField(
@@ -79,13 +84,49 @@ class Body extends StatelessWidget {
                     return 'Confirm Password is not matching your password';
                   return null;
                 }),
+            SquareInputField(
+                hintText: "Name and Surname",
+                onChanged: (value) {},
+                controller: nameController,
+                validator: (String value) {
+                  if (nameController.text == null ||
+                      nameController.text.length < 1)
+                    return 'Please enter your name and sirname';
+                  if (nameController.text.length < 10)
+                    return 'Name and surname must be at least 10 characters';
+                  return null;
+                }),
+            SquareInputField(
+                hintText: "SEC Group",
+                onChanged: (value) {},
+                controller: secController,
+                validator: (String value) {
+                  if (secController.text == null ||
+                      secController.text.length < 1)
+                    return 'Please enter your SEC Group';
+                  if (secController.text.length < 9)
+                    return 'SEC Group must be at least 9 characters';
+                  return null;
+                }),
+            SquareInputField(
+                hintText: "Student ID",
+                onChanged: (value) {},
+                controller: studentIDController,
+                validator: (String value) {
+                  if (studentIDController.text == null ||
+                      studentIDController.text.length < 1)
+                    return 'Please enter your student id';
+                  if (studentIDController.text.length < 12)
+                    return 'Student id must be at 12 characters';
+                  return null;
+                }),
             SquareButton(
               text: "Register Now",
               press: () {
                 if (_formKey.currentState.validate()) {
                   rest
                       .registerNewAccount(emailController.text,
-                          usernameController.text, passwordController.text)
+                          usernameController.text, passwordController.text, nameController.text, secController.text, studentIDController.text)
                       .then((result) => {
                             if (result.success)
                               {
