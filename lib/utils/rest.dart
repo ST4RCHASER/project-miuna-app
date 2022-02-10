@@ -178,7 +178,7 @@ Future<RESTResp> registerNewAccount(
           "name": name,
           "sec": sec,
           "student_id": student_id,
-          major: major
+          "major": major
         }));
     var decoded = convert.jsonDecode(resp.body);
     var body = RESTResp(decoded);
