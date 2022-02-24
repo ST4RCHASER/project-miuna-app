@@ -6,6 +6,7 @@ import 'package:project_miuna/Screens/Home/components/event_card.dart';
 import 'package:project_miuna/Screens/Home/components/menu_button.dart';
 import 'package:project_miuna/Screens/Home/home_screen.dart';
 import 'package:project_miuna/Screens/QRScan/qrscan_screen.dart';
+import 'package:project_miuna/Screens/Settings/settings_screen.dart';
 import 'package:project_miuna/Screens/Welcome/welcome_screen.dart';
 import 'package:project_miuna/components/head_text.dart';
 import 'package:project_miuna/components/thematic_text.dart';
@@ -19,17 +20,40 @@ final KVStorage = new FlutterSecureStorage();
 class Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    rest.updateInfomationToKVStorage();
     return Background(
       child: SingleChildScrollView(
           child: Column(
         children: <Widget>[
-          TextHeader(
-            child: Text(
-              "Home",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 35),
-            ),
+          NikuColumn(
+            [
+              NikuRow([
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                      padding: const EdgeInsets.only(left: 20.0, top: 10.0),
+                      child: Text(
+                        "Home",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 35),
+                      )),
+                ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.55,
+                ),
+                Align(
+                    alignment: Alignment.centerRight,
+                    child: NikuIconButton(Icon(Icons.menu, size: 40))
+                        .onPressed(() {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SettingsScreen()));
+                    }))
+              ])
+            ],
           ),
-          ThematicText(text: 'Join or leave event', top: 0),
+          ThematicText(text: 'Join or leave event', top: 16),
           MenuButton(
             text: 'SCAN NOW',
             color: Colors.green,
@@ -54,33 +78,35 @@ class Body extends StatelessWidget {
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   return Column(children: [
-                    for (var i in snapshot.data.content) EventCard(
-                      startTime: DateTime.parse(i.record.timeJoin).millisecondsSinceEpoch,
-                      name: i.event.name,
-                      creator: i.eventOwner.username,
-                      eventID: i.event.sId,
-                      recordID: i.record.sId,
+                    for (var i in snapshot.data.content)
+                      EventCard(
+                        startTime: DateTime.parse(i.record.timeJoin)
+                            .millisecondsSinceEpoch,
+                        name: i.event.name,
+                        creator: i.eventOwner.username,
+                        eventID: i.event.sId,
+                        recordID: i.record.sId,
                       ),
                   ]);
                 }
                 return Container();
               }),
-          ThematicText(text: 'Dev zone'),
-          SquareButton(
-            text: "Logout",
-            press: () {
-              KVStorage.delete(key: 'token').then((result) => {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) {
-                          return WelcomeScreen();
-                        },
-                      ),
-                    )
-                  });
-            },
-          ),
+          // ThematicText(text: 'Dev zone'),
+          // SquareButton(
+          //   text: "Logout",
+          //   press: () {
+          //     KVStorage.delete(key: 'token').then((result) => {
+          //           Navigator.push(
+          //             context,
+          //             MaterialPageRoute(
+          //               builder: (context) {
+          //                 return WelcomeScreen();
+          //               },
+          //             ),
+          //           )
+          //         });
+          //   },
+          // ),
         ],
       )),
     );

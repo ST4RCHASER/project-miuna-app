@@ -75,6 +75,8 @@ class Body extends StatelessWidget {
                                     {
                                       KVStorage.write(
                                           key: 'token', value: result.content),
+                                      KVStorage.write(
+                                          key: 'username', value: usernameController.text),
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(

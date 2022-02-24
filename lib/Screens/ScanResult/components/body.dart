@@ -49,8 +49,7 @@ class Body extends StatelessWidget {
                       NikuText(
                           "Start: " + snapshot.data.content['time']['readable_start']),
                       NikuText("End: " + snapshot.data.content['time']['readable_end']),
-                      NikuText("Description: " +
-                          snapshot.data.content['description']),
+                      NikuText("Description: " + snapshot.data.content['description'] == null ? snapshot.data.content['description'] : ''),
                       snapshot.data.content['is_joining']
                           ? MenuButton(
                               text: 'LEAVE',
