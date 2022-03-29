@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart' as http;
 import 'package:project_miuna/utils/config.dart' as config;
@@ -11,11 +11,10 @@ final KVStorage = new FlutterSecureStorage();
 Future<void> updateInfomationToKVStorage() async {
   final client = new http.IOClient();
   final url = Uri.parse(config.miunaURL + "account/info");
-  final response = await client.get(url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + await KVStorage.read(key: 'token')
-      });
+  final response = await client.get(url, headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + await KVStorage.read(key: 'token')
+  });
   final responseJson = convert.jsonDecode(response.body);
   var body = UserInfoREST.fromJson(responseJson);
   print('Pulling data to KV...');
@@ -32,6 +31,7 @@ Future<void> updateInfomationToKVStorage() async {
     KVStorage.write(key: 'created', value: body.content.created);
   }
 }
+
 Future<RESTResp> updateInfomation(
     {username: '',
     email: '',
@@ -48,7 +48,7 @@ Future<RESTResp> updateInfomation(
         'Authorization': 'Bearer ' + await KVStorage.read(key: 'token')
       },
       body: convert.jsonEncode(<String, dynamic>{
-        "username": username ,
+        "username": username,
         "email": email,
         "password": password,
         "name": name,
@@ -56,10 +56,10 @@ Future<RESTResp> updateInfomation(
         "student_id": student_id,
         "major": major
       }));
-    print(resp.body);
-    var decoded = convert.jsonDecode(resp.body);
-    var body = RESTResp(decoded);
-    return body;
+  print(resp.body);
+  var decoded = convert.jsonDecode(resp.body);
+  var body = RESTResp(decoded);
+  return body;
 }
 
 Future<EventListRESTResp> getJoinedEventList() async {
@@ -196,7 +196,11 @@ Future<RESTResp> getEventInfo(String id, bool change) async {
     print(token);
     if (token == null) token = '';
     http.Response resp = await http.get(
-        Uri.parse(config.miunaURL + "event/info/" + id + '?change=' +  change.toString()),
+        Uri.parse(config.miunaURL +
+            "event/info/" +
+            id +
+            '?change=' +
+            change.toString()),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer ' + token
@@ -281,278 +285,353 @@ class restResponse {
         this.response = response;
 }
 
-
 class UserInfoREST {
-	bool success;
-	int statusCode;
-	String message;
-	UserInfoContent content;
+  bool success;
+  int statusCode;
+  String message;
+  UserInfoContent content;
 
-	UserInfoREST({this.success, this.statusCode, this.message, this.content});
+  UserInfoREST({this.success, this.statusCode, this.message, this.content});
 
-	UserInfoREST.fromJson(Map<String, dynamic> json) {
-		success = json['success'];
-		statusCode = json['statusCode'];
-		message = json['message'];
-		content = json['content'] != null ? new UserInfoContent.fromJson(json['content']) : null;
-	}
+  UserInfoREST.fromJson(Map<String, dynamic> json) {
+    success = json['success'];
+    statusCode = json['statusCode'];
+    message = json['message'];
+    content = json['content'] != null
+        ? new UserInfoContent.fromJson(json['content'])
+        : null;
+  }
 
-	Map<String, dynamic> toJson() {
-		final Map<String, dynamic> data = new Map<String, dynamic>();
-		data['success'] = this.success;
-		data['statusCode'] = this.statusCode;
-		data['message'] = this.message;
-		if (this.content != null) {
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['success'] = this.success;
+    data['statusCode'] = this.statusCode;
+    data['message'] = this.message;
+    if (this.content != null) {
       data['content'] = this.content.toJson();
     }
-		return data;
-	}
+    return data;
+  }
 }
 
 class UserInfoContent {
-	String id;
-	String username;
-	String lowerUsername;
-	String email;
-	String created;
-	int class_;
-	String major;
-	String name;
-	String sec;
-	String studentId;
+  String id;
+  String username;
+  String lowerUsername;
+  String email;
+  String created;
+  int class_;
+  String major;
+  String name;
+  String sec;
+  String studentId;
 
-	UserInfoContent({this.id, this.username, this.lowerUsername, this.email, this.created, this.class_, this.major, this.name, this.sec, this.studentId});
+  UserInfoContent(
+      {this.id,
+      this.username,
+      this.lowerUsername,
+      this.email,
+      this.created,
+      this.class_,
+      this.major,
+      this.name,
+      this.sec,
+      this.studentId});
 
-	UserInfoContent.fromJson(Map<String, dynamic> json) {
-		id = json['id'];
-		username = json['username'];
-		lowerUsername = json['lowerUsername'];
-		email = json['email'];
-		created = json['created'];
-		class_ = json['class'];
-		major = json['major'];
-		name = json['name'];
-		sec = json['sec'];
-		studentId = json['student_id'];
-	}
+  UserInfoContent.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    username = json['username'];
+    lowerUsername = json['lowerUsername'];
+    email = json['email'];
+    created = json['created'];
+    class_ = json['class'];
+    major = json['major'];
+    name = json['name'];
+    sec = json['sec'];
+    studentId = json['student_id'];
+  }
 
-	Map<String, dynamic> toJson() {
-		final Map<String, dynamic> data = new Map<String, dynamic>();
-		data['id'] = this.id;
-		data['username'] = this.username;
-		data['lowerUsername'] = this.lowerUsername;
-		data['email'] = this.email;
-		data['created'] = this.created;
-		data['class'] = this.class_;
-		data['major'] = this.major;
-		data['name'] = this.name;
-		data['sec'] = this.sec;
-		data['student_id'] = this.studentId;
-		return data;
-	}
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['username'] = this.username;
+    data['lowerUsername'] = this.lowerUsername;
+    data['email'] = this.email;
+    data['created'] = this.created;
+    data['class'] = this.class_;
+    data['major'] = this.major;
+    data['name'] = this.name;
+    data['sec'] = this.sec;
+    data['student_id'] = this.studentId;
+    return data;
+  }
 }
 
 class EventListRESTResp {
-	bool success;
-	int statusCode;
-	String message;
-	List<Content> content;
+  bool success;
+  int statusCode;
+  String message;
+  List<Content> content;
 
-	EventListRESTResp({this.success, this.statusCode, this.message, this.content});
+  EventListRESTResp(
+      {this.success, this.statusCode, this.message, this.content});
 
-	EventListRESTResp.fromJson(Map<String, dynamic> json) {
-		success = json['success'];
-		statusCode = json['statusCode'];
-		message = json['message'];
-		if (json['content'] != null) {
-			content = <Content>[];
-			json['content'].forEach((v) { content.add(new Content.fromJson(v)); });
-		}
-	}
+  EventListRESTResp.fromJson(Map<String, dynamic> json) {
+    success = json['success'];
+    statusCode = json['statusCode'];
+    message = json['message'];
+    if (json['content'] != null) {
+      content = <Content>[];
+      json['content'].forEach((v) {
+        content.add(new Content.fromJson(v));
+      });
+    }
+  }
 
-	Map<String, dynamic> toJson() {
-		final Map<String, dynamic> data = new Map<String, dynamic>();
-		data['success'] = this.success;
-		data['statusCode'] = this.statusCode;
-		data['message'] = this.message;
-		if (this.content != null) {
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['success'] = this.success;
+    data['statusCode'] = this.statusCode;
+    data['message'] = this.message;
+    if (this.content != null) {
       data['content'] = this.content.map((v) => v.toJson()).toList();
     }
-		return data;
-	}
+    return data;
+  }
 }
 
 class Content {
-	Record record;
-	Event event;
-	EventOwner eventOwner;
+  Record record;
+  Event event;
+  EventOwner eventOwner;
 
-	Content({this.record, this.event, this.eventOwner});
+  Content({this.record, this.event, this.eventOwner});
 
-	Content.fromJson(Map<String, dynamic> json) {
-		record = json['record'] != null ? new Record.fromJson(json['record']) : null;
-		event = json['event'] != null ? new Event.fromJson(json['event']) : null;
-		eventOwner = json['eventOwner'] != null ? new EventOwner.fromJson(json['eventOwner']) : null;
-	}
+  Content.fromJson(Map<String, dynamic> json) {
+    record =
+        json['record'] != null ? new Record.fromJson(json['record']) : null;
+    event = json['event'] != null ? new Event.fromJson(json['event']) : null;
+    eventOwner = json['eventOwner'] != null
+        ? new EventOwner.fromJson(json['eventOwner'])
+        : null;
+  }
 
-	Map<String, dynamic> toJson() {
-		final Map<String, dynamic> data = new Map<String, dynamic>();
-		if (this.record != null) {
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    if (this.record != null) {
       data['record'] = this.record.toJson();
     }
-		if (this.event != null) {
+    if (this.event != null) {
       data['event'] = this.event.toJson();
     }
-		if (this.eventOwner != null) {
+    if (this.eventOwner != null) {
       data['eventOwner'] = this.eventOwner.toJson();
     }
-		return data;
-	}
+    return data;
+  }
 }
 
 class Record {
-	String sId;
-	String ownerID;
-	String eventID;
-	String timeJoin;
-	String timeLeave;
-	String created;
-	int iV;
+  String sId;
+  String ownerID;
+  String eventID;
+  String timeJoin;
+  String timeLeave;
+  String created;
+  int iV;
 
-	Record({this.sId, this.ownerID, this.eventID, this.timeJoin, this.timeLeave, this.created, this.iV});
+  Record(
+      {this.sId,
+      this.ownerID,
+      this.eventID,
+      this.timeJoin,
+      this.timeLeave,
+      this.created,
+      this.iV});
 
-	Record.fromJson(Map<String, dynamic> json) {
-		sId = json['_id'];
-		ownerID = json['ownerID'];
-		eventID = json['eventID'];
-		timeJoin = json['timeJoin'];
-		timeLeave = json['timeLeave'];
-		created = json['created'];
-		iV = json['__v'];
-	}
+  Record.fromJson(Map<String, dynamic> json) {
+    sId = json['_id'];
+    ownerID = json['ownerID'];
+    eventID = json['eventID'];
+    timeJoin = json['timeJoin'];
+    timeLeave = json['timeLeave'];
+    created = json['created'];
+    iV = json['__v'];
+  }
 
-	Map<String, dynamic> toJson() {
-		final Map<String, dynamic> data = new Map<String, dynamic>();
-		data['_id'] = this.sId;
-		data['ownerID'] = this.ownerID;
-		data['eventID'] = this.eventID;
-		data['timeJoin'] = this.timeJoin;
-		data['timeLeave'] = this.timeLeave;
-		data['created'] = this.created;
-		data['__v'] = this.iV;
-		return data;
-	}
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['_id'] = this.sId;
+    data['ownerID'] = this.ownerID;
+    data['eventID'] = this.eventID;
+    data['timeJoin'] = this.timeJoin;
+    data['timeLeave'] = this.timeLeave;
+    data['created'] = this.created;
+    data['__v'] = this.iV;
+    return data;
+  }
 }
 
 class Event {
-	String sId;
-	String name;
-	String ownerID;
-	Time time;
-	int state;
-	int qrType;
-	String hash;
-	String description;
-	int iV;
+  String sId;
+  String name;
+  String ownerID;
+  Time time;
+  int state;
+  int qrType;
+  String hash;
+  String description;
+  int iV;
 
-	Event({this.sId, this.name, this.ownerID, this.time, this.state, this.qrType, this.hash, this.description, this.iV});
+  Event(
+      {this.sId,
+      this.name,
+      this.ownerID,
+      this.time,
+      this.state,
+      this.qrType,
+      this.hash,
+      this.description,
+      this.iV});
 
-	Event.fromJson(Map<String, dynamic> json) {
-		sId = json['_id'];
-		name = json['name'];
-		ownerID = json['ownerID'];
-		time = json['time'] != null ? new Time.fromJson(json['time']) : null;
-		state = json['state'];
-		qrType = json['qrType'];
-		hash = json['hash'];
-		description = json['description'];
-		iV = json['__v'];
-	}
+  Event.fromJson(Map<String, dynamic> json) {
+    sId = json['_id'];
+    name = json['name'];
+    ownerID = json['ownerID'];
+    time = json['time'] != null ? new Time.fromJson(json['time']) : null;
+    state = json['state'];
+    qrType = json['qrType'];
+    hash = json['hash'];
+    description = json['description'];
+    iV = json['__v'];
+  }
 
-	Map<String, dynamic> toJson() {
-		final Map<String, dynamic> data = new Map<String, dynamic>();
-		data['_id'] = this.sId;
-		data['name'] = this.name;
-		data['ownerID'] = this.ownerID;
-		if (this.time != null) {
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['_id'] = this.sId;
+    data['name'] = this.name;
+    data['ownerID'] = this.ownerID;
+    if (this.time != null) {
       data['time'] = this.time.toJson();
     }
-		data['state'] = this.state;
-		data['qrType'] = this.qrType;
-		data['hash'] = this.hash;
-		data['description'] = this.description;
-		data['__v'] = this.iV;
-		return data;
-	}
+    data['state'] = this.state;
+    data['qrType'] = this.qrType;
+    data['hash'] = this.hash;
+    data['description'] = this.description;
+    data['__v'] = this.iV;
+    return data;
+  }
 }
 
 class Time {
-	String created;
-	String start;
-	int end;
+  String created;
+  String start;
+  int end;
 
-	Time({this.created, this.start, this.end});
+  Time({this.created, this.start, this.end});
 
-	Time.fromJson(Map<String, dynamic> json) {
-		created = json['created'];
-		start = json['start'];
-		end = json['end'];
-	}
+  Time.fromJson(Map<String, dynamic> json) {
+    created = json['created'];
+    start = json['start'];
+    end = json['end'];
+  }
 
-	Map<String, dynamic> toJson() {
-		final Map<String, dynamic> data = new Map<String, dynamic>();
-		data['created'] = this.created;
-		data['start'] = this.start;
-		data['end'] = this.end;
-		return data;
-	}
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['created'] = this.created;
+    data['start'] = this.start;
+    data['end'] = this.end;
+    return data;
+  }
 }
 
 class EventOwner {
-	String sId;
-	String email;
-	String username;
-	String lowerUsername;
-	String password;
-	String name;
-	String sec;
-	String studentId;
-	int class_;
-	String created;
-	int iV;
-	String major;
+  String sId;
+  String email;
+  String username;
+  String lowerUsername;
+  String password;
+  String name;
+  String sec;
+  String studentId;
+  int class_;
+  String created;
+  int iV;
+  String major;
 
-	EventOwner({this.sId, this.email, this.username, this.lowerUsername, this.password, this.name, this.sec, this.studentId, this.class_, this.created, this.iV, this.major});
+  EventOwner(
+      {this.sId,
+      this.email,
+      this.username,
+      this.lowerUsername,
+      this.password,
+      this.name,
+      this.sec,
+      this.studentId,
+      this.class_,
+      this.created,
+      this.iV,
+      this.major});
 
-	EventOwner.fromJson(Map<String, dynamic> json) {
-		sId = json['_id'];
-		email = json['email'];
-		username = json['username'];
-		lowerUsername = json['lowerUsername'];
-		password = json['password'];
-		name = json['name'];
-		sec = json['sec'];
-		studentId = json['student_id'];
-		class_ = json['class'];
-		created = json['created'];
-		iV = json['__v'];
-		major = json['major'];
-	}
+  EventOwner.fromJson(Map<String, dynamic> json) {
+    sId = json['_id'];
+    email = json['email'];
+    username = json['username'];
+    lowerUsername = json['lowerUsername'];
+    password = json['password'];
+    name = json['name'];
+    sec = json['sec'];
+    studentId = json['student_id'];
+    class_ = json['class'];
+    created = json['created'];
+    iV = json['__v'];
+    major = json['major'];
+  }
 
-	Map<String, dynamic> toJson() {
-		final Map<String, dynamic> data = new Map<String, dynamic>();
-		data['_id'] = this.sId;
-		data['email'] = this.email;
-		data['username'] = this.username;
-		data['lowerUsername'] = this.lowerUsername;
-		data['password'] = this.password;
-		data['name'] = this.name;
-		data['sec'] = this.sec;
-		data['student_id'] = this.studentId;
-		data['class'] = this.class_;
-		data['created'] = this.created;
-		data['__v'] = this.iV;
-		data['major'] = this.major;
-		return data;
-	}
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['_id'] = this.sId;
+    data['email'] = this.email;
+    data['username'] = this.username;
+    data['lowerUsername'] = this.lowerUsername;
+    data['password'] = this.password;
+    data['name'] = this.name;
+    data['sec'] = this.sec;
+    data['student_id'] = this.studentId;
+    data['class'] = this.class_;
+    data['created'] = this.created;
+    data['__v'] = this.iV;
+    data['major'] = this.major;
+    return data;
+  }
+}
+
+getLocation() async {
+  try {
+    bool serviceEnabled;
+    LocationPermission permission;
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        // Permissions are denied, next time you could try
+        // requesting permissions again (this is also where
+        // Android's shouldShowRequestPermissionRationale
+        // returned true. According to Android guidelines
+        // your App should show an explanatory UI now.
+        return Future.error('Location permissions are denied, Please allow them to join the event');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are denied forever, handle appropriately.
+      return Future.error(
+          'Location permissions are permanently denied, Please allow them from settings before joining');
+    }
+    return Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+  } catch (e) {
+    print(e);
+  }
 }

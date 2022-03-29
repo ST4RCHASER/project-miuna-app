@@ -4,7 +4,7 @@ import 'package:project_miuna/Screens/Welcome/welcome_screen.dart';
 import 'package:project_miuna/Screens/Home/home_screen.dart';
 import 'package:project_miuna/constants.dart';
 import 'package:project_miuna/constants.dart';
-
+import 'package:flutter/services.dart';
 final KVStorage = new FlutterSecureStorage();
 var token = null;
 void main() => runApp(MyApp());
@@ -13,6 +13,10 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Colors.black,
+      statusBarBrightness: Brightness.light,
+    ));
     var future = new FutureBuilder(
       future: KVStorage.read(key: 'token'),
         builder: (BuildContext context, AsyncSnapshot<String> snapshot) {

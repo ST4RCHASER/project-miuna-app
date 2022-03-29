@@ -154,7 +154,83 @@ class Body extends StatelessWidget {
                               color: Colors.green,
                               textColor: Colors.white,
                               press: () {
-                                rest.joinEvent(code).then((value) => {
+                                var clientLat = 0,clientLong = 0, eventLat = data["loc_lat"], eventLong = data["loc_long"];
+                                if(data["loc_check"] == "true"){
+                                  rest.getLocation().then((value) => {
+                                    clientLat = value.latitude,
+                                    clientLong = value.longitude,
+                                    //If client more than 2km away from event location
+                                    if(clientLat != 0 && clientLong != 0 && (clientLat - eventLat).abs() > 0.002 && (clientLong - eventLong).abs() > 0.002){
+                                      // if(clientLat - eventLat > 0.02 || clientLat - eventLat < -0.02 || clientLong - eventLong > 0.02 || clientLong - eventLong < -0.02){
+                                        showDialog(
+                                          context: mcontext,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: Text("Location Error"),
+                                              content: Text(
+                                                  "You are too far from the event location. Please move closer to the event location."),
+                                              actions: <Widget>[
+                                                FlatButton(
+                                                  child: Text("Close"),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                )
+                                              ],
+                                            );
+                                          },
+                                        )
+                                      }else{
+                                        joinEVT(context)
+                                      }
+                                  }).catchError((error) => {
+                                    showDialog(
+                                      context: mcontext,
+                                      builder: (BuildContext context) =>
+                                          AlertDialog(
+                                            title: Text("Failed"),
+                                            content: Text(
+                                                "Failed to get location"),
+                                            actions: <Widget>[
+                                              TextButton(
+                                                onPressed: () => {
+                                                  Navigator.pop(context),
+                                                },
+                                                child: const Text('OK'),
+                                              ),
+                                            ],
+                                          ),
+                                    )
+                                  });
+                                }else {
+                                  joinEVT(context);
+                                }
+                              },
+                            ),
+                    ],
+                  ),
+                );
+              } else {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+            },
+          ),
+          MenuButton(
+            text: 'DISMISS',
+            color: Colors.blue,
+            textColor: Colors.white,
+            press: () {
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      )),
+    );
+  }
+  joinEVT(context){
+    rest.joinEvent(code).then((value) => {
                                       if (value.success)
                                         {
                                           Navigator.push(
@@ -200,28 +276,5 @@ class Body extends StatelessWidget {
                                                       ]))
                                         }
                                     });
-                              },
-                            ),
-                    ],
-                  ),
-                );
-              } else {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-            },
-          ),
-          MenuButton(
-            text: 'DISMISS',
-            color: Colors.blue,
-            textColor: Colors.white,
-            press: () {
-              Navigator.pop(context);
-            },
-          ),
-        ],
-      )),
-    );
   }
 }

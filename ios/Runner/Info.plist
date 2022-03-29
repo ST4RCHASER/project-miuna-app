@@ -45,5 +45,7 @@
 		<true />
 		<key>NSCameraUsageDescription</key>
 		<string>This app needs camera access to scan QR codes</string>
+		<key>NSLocationWhenInUseUsageDescription</key>
+		<string>This app access to loaction to check limiting loaction</string>
 	</dict>
-</plist>
+</plist> 
