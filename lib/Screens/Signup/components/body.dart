@@ -27,16 +27,7 @@ class Body extends State<BodyStateing> {
   TextEditingController nameController = new TextEditingController();
   TextEditingController secController = new TextEditingController();
   TextEditingController studentIDController = new TextEditingController();
-  DropListModel dropListModel = new DropListModel([
-    OptionItem(id: "1", title: 'เทคโนโลยีมัลติมีเดีย'),
-    OptionItem(id: "2", title: 'เทคโนโลยีสารสนเทศ'),
-    OptionItem(id: "3", title: 'นวัตกรรมวัสดุเพื่ออุตสาหกรรม'),
-    OptionItem(id: "4", title: 'วิทยาการการจัดการข้อมูล'),
-    OptionItem(id: "5", title: 'วิทยาการคอมพิวเตอร์'),
-    OptionItem(id: "6", title: 'เทคโนโลยีดิจิทัลมีเดีย'),
-  ]);
-  OptionItem optionItemSelected =
-      new OptionItem(id: "1", title: 'เทคโนโลยีมัลติมีเดีย');
+  TextEditingController majorController = new TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Background(
@@ -114,30 +105,33 @@ class Body extends State<BodyStateing> {
                     return 'Name and surname must be at least 10 characters';
                   return null;
                 }),
-            TextFieldContainer(
-              child: SelectDropList(
-                this.optionItemSelected,
-                this.dropListModel,
-                (optionItem) {
-                  optionItemSelected = optionItem;
-                  this.setState(() {});
-                },
-              ),
-            ),
             SquareInputField(
-                hintText: "SEC Group",
+                hintText: "Major",
+                icon: Icons.school,
                 onChanged: (value) {},
+                controller: majorController,
+                validator: (String value) {
+                  if (majorController.text == null ||
+                      majorController.text.length < 1)
+                    return 'Please enter your major';
+                  if (majorController.text.length < 5)
+                    return 'Major must be at least 5 characters';
+                  return null;
+                }),
+            SquareInputField(
+                hintText: "Year",
+                onChanged: (value) {},
+                icon: Icons.calendar_today,
                 controller: secController,
                 validator: (String value) {
                   if (secController.text == null ||
                       secController.text.length < 1)
-                    return 'Please enter your SEC Group';
-                  if (secController.text.length < 9)
-                    return 'SEC Group must be at least 9 characters';
+                    return 'Please enter your year';
                   return null;
                 }),
             SquareInputField(
                 hintText: "Student ID",
+                icon: Icons.credit_card,
                 onChanged: (value) {},
                 controller: studentIDController,
                 validator: (String value) {
@@ -160,7 +154,7 @@ class Body extends State<BodyStateing> {
                           nameController.text,
                           secController.text,
                           studentIDController.text,
-                          optionItemSelected.title)
+                          majorController.text)
                       .then((result) => {
                             if (result.success)
                               {

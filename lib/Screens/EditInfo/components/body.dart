@@ -32,17 +32,7 @@ class Body extends State<BodyStateing> {
   TextEditingController nameController = new TextEditingController();
   TextEditingController secController = new TextEditingController();
   TextEditingController studentIDController = new TextEditingController();
-  bool isSet = false;
-  DropListModel dropListModel = new DropListModel([
-    OptionItem(id: "1", title: 'เทคโนโลยีมัลติมีเดีย'),
-    OptionItem(id: "2", title: 'เทคโนโลยีสารสนเทศ'),
-    OptionItem(id: "3", title: 'นวัตกรรมวัสดุเพื่ออุตสาหกรรม'),
-    OptionItem(id: "4", title: 'วิทยาการการจัดการข้อมูล'),
-    OptionItem(id: "5", title: 'วิทยาการคอมพิวเตอร์'),
-    OptionItem(id: "6", title: 'เทคโนโลยีดิจิทัลมีเดีย'),
-  ]);
-  OptionItem optionItemSelected =
-      new OptionItem(id: "6", title: 'เทคโนโลยีดิจิทัลมีเดีย');
+  TextEditingController majorController = new TextEditingController();
 
   @override
   void initState() {
@@ -60,17 +50,10 @@ class Body extends State<BodyStateing> {
         KVStorage.read(key: 'sec'),
         KVStorage.read(key: 'major'),
       ]).then((value) {
-        if (!isSet) {
-          print('=======================');
-          print(value);
-          nameController.text = value[0];
-          studentIDController.text = value[1];
-          secController.text = value[2];
-          optionItemSelected = dropListModel.listOptionItems.firstWhere(
-              (element) => element.title == value[3],
-              orElse: () => dropListModel.listOptionItems.first);
-        }
-        isSet = true;
+        nameController.text = value[0];
+        studentIDController.text = value[1];
+        secController.text = value[2];
+        majorController.text = value[3];
         return '';
       }),
       builder: (context, snapshot) {
@@ -102,6 +85,7 @@ class Body extends State<BodyStateing> {
                 NikuColumn([
                   SquareInputField(
                       hintText: "Name and Surname",
+                      icon: Icons.person,
                       onChanged: (value) {},
                       controller: nameController,
                       validator: (String value) {
@@ -112,30 +96,33 @@ class Body extends State<BodyStateing> {
                           return 'Name and surname must be at least 10 characters';
                         return null;
                       }),
-                  TextFieldContainer(
-                    child: SelectDropList(
-                      this.optionItemSelected,
-                      this.dropListModel,
-                      (optionItem) {
-                        this.optionItemSelected = optionItem;
-                        this.setState(() {});
-                      },
-                    ),
-                  ),
                   SquareInputField(
-                      hintText: "SEC Group",
+                      hintText: "Major",
+                      icon: Icons.school,
                       onChanged: (value) {},
+                      controller: majorController,
+                      validator: (String value) {
+                        if (majorController.text == null ||
+                            majorController.text.length < 1)
+                          return 'Please enter your major';
+                        if (majorController.text.length < 5)
+                          return 'Major must be at least 5 characters';
+                        return null;
+                      }),
+                  SquareInputField(
+                      hintText: "year",
+                      onChanged: (value) {},
+                      icon: Icons.calendar_today,
                       controller: secController,
                       validator: (String value) {
                         if (secController.text == null ||
                             secController.text.length < 1)
-                          return 'Please enter your SEC Group';
-                        if (secController.text.length < 9)
-                          return 'SEC Group must be at least 9 characters';
+                          return 'Please enter your year';
                         return null;
                       }),
                   SquareInputField(
                       hintText: "Student ID",
+                      icon: Icons.credit_card,
                       onChanged: (value) {},
                       controller: studentIDController,
                       validator: (String value) {
@@ -150,13 +137,12 @@ class Body extends State<BodyStateing> {
                     text: "Save",
                     press: () {
                       print('==============Save==============');
-                      print(this.optionItemSelected.title);
                       rest
                           .updateInfomation(
                             name: nameController.text,
                             sec: secController.text,
                             student_id: studentIDController.text,
-                            major: this.optionItemSelected.title,
+                            major: majorController.text,
                           )
                           .then((result) => {
                                 if (result.success)
@@ -171,7 +157,7 @@ class Body extends State<BodyStateing> {
                                         value: studentIDController.text),
                                     KVStorage.write(
                                         key: "major",
-                                        value: this.optionItemSelected.title),
+                                        value: majorController.text),
                                     showDialog(
                                       context: context,
                                       builder: (BuildContext context) {

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:niku/niku.dart';
+import 'package:project_miuna/Screens/ScanResult/scan_result.dart';
 import 'package:project_miuna/constants.dart';
 
 class EventCard extends StatefulWidget {
@@ -90,36 +91,70 @@ class EventCardState extends State<EventCard> {
                 padding: EdgeInsets.all(15),
                 child: NikuButton(
                   Container(
-                      child: NikuColumn([
+                      child: NikuRow([
                     NikuColumn([
-                      NikuRow([
-                        Icon(Icons.event_available,size: 20),
-                        NikuText(this.name)
-                            .fontSize(18)
-                            .bold()
-                            .color(Colors.black).niku().pl(2)
+                      NikuColumn([
+                        NikuRow([
+                          Icon(Icons.event_available, size: 20),
+                          NikuText(this.name)
+                              .fontSize(18)
+                              .bold()
+                              .color(Colors.black)
+                              .niku()
+                              .pl(2)
+                        ]),
                       ]),
-                    ]),
+                      NikuColumn([
+                        NikuRow([
+                          Icon(Icons.perm_identity, size: 16).niku().pl(6),
+                          NikuText('By ' + this.createor)
+                              .fontSize(14)
+                              .color(Colors.black)
+                              .niku()
+                              .pl(2)
+                        ]),
+                        NikuRow([
+                          Icon(Icons.hourglass_empty, size: 16).niku().pl(6),
+                          NikuText(convertSecondsToHMmSs(
+                                  (betaween / 1000).round()))
+                              .fontSize(14)
+                              .color(Colors.black)
+                              .niku()
+                              .pl(2)
+                        ]),
+                      ]),
+                    ])
+                        .niku()
+                        .topLeft()
+                        .width(MediaQuery.of(context).size.width * 0.59),
                     NikuColumn([
-                      NikuRow([
-                        Icon(Icons.perm_identity,size: 16).niku().pl(6),
-                        NikuText('By ' + this.createor)
-                            .fontSize(14)
-                            .color(Colors.black)
-                            .niku()
-                            .pl(2)
-                      ]),
-                      NikuRow([
-                        Icon(Icons.hourglass_empty,size: 16).niku().pl(6),
-                        NikuText(convertSecondsToHMmSs(
-                                (betaween / 1000).round()))
-                            .fontSize(14)
-                            .color(Colors.black)
-                            .niku()
-                            .pl(2)
-                      ]),
-                    ]),
-                  ]).spaceBetween().niku().topCenter()),
+                      //Leave Button
+                      NikuButton(
+                        Container(
+                          child: NikuRow([
+                            Icon(Icons.exit_to_app,
+                                size: 20, color: Colors.white),
+                            NikuText('Leave')
+                                .fontSize(18)
+                                .bold()
+                                .color(Colors.white)
+                                .niku()
+                                .pl(2)
+                          ]),
+                        ),
+                      )..onPressed(() {
+                        final Map<String, dynamic> data = new Map<String, dynamic>();
+                        data["id"] = this.eventID;
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  ScanResult(null, null, data, true),
+                            ),
+                          );
+                        }).bg(Colors.red).p(6).mt(5)
+                    ])
+                  ])),
                 ).textColors(Colors.black)),
           ),
         ));

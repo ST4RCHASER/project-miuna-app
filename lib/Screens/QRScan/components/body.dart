@@ -8,6 +8,7 @@ import 'package:project_miuna/Screens/Welcome/welcome_screen.dart';
 import 'package:project_miuna/components/head_text.dart';
 import 'package:project_miuna/components/thematic_text.dart';
 import 'package:project_miuna/utils/rest.dart' as rest;
+import 'package:project_miuna/utils/TOTP.dart' as TTOTP;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:project_miuna/components/square_button.dart';
 import 'package:niku/niku.dart';
@@ -16,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'dart:io' show Platform;
 import 'dart:io' as IO;
+import 'dart:convert';
 
 final KVStorage = new FlutterSecureStorage();
 
@@ -148,7 +150,65 @@ class _QRViewExampleState extends State<Body> {
     controller.scannedDataStream.listen((scanData) {
       if (result != null) return;
       controller.pauseCamera();
-      if (scanData.code.length != 24) {
+      //Convert scanData.code from base 64 to json string
+      try {
+        var decodedJson = base64.decode(scanData.code);
+        var json = utf8.decode(decodedJson);
+        var data = jsonDecode(json);
+        //Open ScanResult page
+        controller.resumeCamera();
+        setState(() {
+          result = null;
+        });
+        print("========");
+        print(data);
+        print(data["id"]);
+        print("========");
+        var totp = TTOTP.OTP.generateTOTPCode(data["hash"], new DateTime.now().millisecondsSinceEpoch);
+        print(totp);
+        print(data["totp"]);
+        print("========");
+        if ((data["type"] == 1 || data["type"] == "1") && totp != data["totp"]) {
+          print("This QRCode is expired");
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text("Expired"),
+                content: Text("This QRCode is expired"),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text("Close"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      controller.resumeCamera();
+                      setState(() {
+                        result = null;
+                      });
+                    },
+                  )
+                ],
+              );
+            },
+          );
+          return;
+        }
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ScanResult(scanData, controller, data, false),
+          ),
+        ).then((value) {
+          controller.resumeCamera();
+          setState(() {
+            result = value;
+          });
+        });
+        controller.resumeCamera();
+        setState(() {
+          result = null;
+        });
+      } catch (e) {
         //Show invalid QR code dialog
         showDialog(
           context: context,
@@ -171,27 +231,7 @@ class _QRViewExampleState extends State<Body> {
             );
           },
         );
-      } else {
-        //Open ScanResult page
-        controller.resumeCamera();
-        setState(() {
-          result = null;
-        });
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ScanResult(scanData, controller),
-          ),
-        ).then((value) {
-          controller.resumeCamera();
-          setState(() {
-            result = value;
-          });
-        });
-        controller.resumeCamera();
-        setState(() {
-          result = null;
-        });
+        print(e);
       }
       // showDialog(
       //     context: context,
