@@ -48,12 +48,69 @@ class Body extends StatelessWidget {
             future: rest.getEventInfo(code, false),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                if (!force && (snapshot.data.content["qrType"] == 2 ||
-                    snapshot.data.content["qrType"] == "2")) {
+                Timer setTimeout(callback, [int duration = 1]) {
+                  return Timer(Duration(milliseconds: duration), callback);
+                }
+
+                if (!force && snapshot.data.content["time"]["start"] >
+                    DateTime.now().millisecondsSinceEpoch) {
+                  Timer t;
+                  t = setTimeout(() => {
+                        showDialog(
+                          context: mcontext,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text("Not started."),
+                              content: Text(
+                                  "This event is not started yet. Please check back later."),
+                              actions: <Widget>[
+                                FlatButton(
+                                  child: Text("Close"),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    Navigator.pop(mcontext);
+                                  },
+                                )
+                              ],
+                            );
+                          },
+                        ),
+                        t.cancel(),
+                      });
+                  return Container();
+                }
+                if (!force &&
+                    snapshot.data.content["time"]["end"] <
+                        DateTime.now().millisecondsSinceEpoch) {
+                  Timer t;
+                  t = setTimeout(() => {
+                        showDialog(
+                          context: mcontext,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text("Ended event."),
+                              content: Text(
+                                  "This event has ended. cannot join this event."),
+                              actions: <Widget>[
+                                FlatButton(
+                                  child: Text("Close"),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    Navigator.pop(mcontext);
+                                  },
+                                )
+                              ],
+                            );
+                          },
+                        ),
+                        t.cancel(),
+                      });
+                  return Container();
+                }
+                if (!force &&
+                    (snapshot.data.content["qrType"] == 2 ||
+                        snapshot.data.content["qrType"] == "2")) {
                   if (data['hash'] != snapshot.data.content["oneTimeHash"]) {
-                    Timer setTimeout(callback, [int duration = 1]) {
-                      return Timer(Duration(milliseconds: duration), callback);
-                    }
                     Timer t;
                     t = setTimeout(() => {
                           showDialog(
@@ -154,55 +211,76 @@ class Body extends StatelessWidget {
                               color: Colors.green,
                               textColor: Colors.white,
                               press: () {
-                                var clientLat = 0,clientLong = 0, eventLat = data["loc_lat"], eventLong = data["loc_long"];
-                                if(data["loc_check"] == "true"){
-                                  rest.getLocation().then((value) => {
-                                    clientLat = value.latitude,
-                                    clientLong = value.longitude,
-                                    //If client more than 2km away from event location
-                                    if(clientLat != 0 && clientLong != 0 && (clientLat - eventLat).abs() > 0.002 && (clientLong - eventLong).abs() > 0.002){
-                                      // if(clientLat - eventLat > 0.02 || clientLat - eventLat < -0.02 || clientLong - eventLong > 0.02 || clientLong - eventLong < -0.02){
-                                        showDialog(
-                                          context: mcontext,
-                                          builder: (BuildContext context) {
-                                            return AlertDialog(
-                                              title: Text("Location Error"),
-                                              content: Text(
-                                                  "You are too far from the event location. Please move closer to the event location."),
-                                              actions: <Widget>[
-                                                FlatButton(
-                                                  child: Text("Close"),
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop();
+                                var clientLat = 0.00,
+                                    clientLong = 0.00,
+                                    eventLat = snapshot.data.content["loc_lat"],
+                                    eventLong =
+                                        snapshot.data.content["loc_lng"];
+                                if (snapshot.data.content["loc_check"] ==
+                                        "true" ||
+                                    snapshot.data.content["loc_check"] ==
+                                        true) {
+                                  rest
+                                      .getLocation()
+                                      .then((value) => {
+                                            clientLat = value.latitude,
+                                            clientLong = value.longitude,
+                                            //If client more than 2km away from event location
+                                            if (clientLat != 0.00 &&
+                                                clientLong != 0.00 &&
+                                                (clientLat - eventLat).abs() >
+                                                    0.002 &&
+                                                (clientLong - eventLong).abs() >
+                                                    0.002)
+                                              {
+                                                // if(clientLat - eventLat > 0.02 || clientLat - eventLat < -0.02 || clientLong - eventLong > 0.02 || clientLong - eventLong < -0.02){
+                                                showDialog(
+                                                  context: mcontext,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return AlertDialog(
+                                                      title: Text(
+                                                          "Location Error"),
+                                                      content: Text(
+                                                          "You are too far from the event location. Please move closer to the event location."),
+                                                      actions: <Widget>[
+                                                        FlatButton(
+                                                          child: Text("Close"),
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          },
+                                                        )
+                                                      ],
+                                                    );
                                                   },
                                                 )
-                                              ],
-                                            );
-                                          },
-                                        )
-                                      }else{
-                                        joinEVT(context)
-                                      }
-                                  }).catchError((error) => {
-                                    showDialog(
-                                      context: mcontext,
-                                      builder: (BuildContext context) =>
-                                          AlertDialog(
-                                            title: Text("Failed"),
-                                            content: Text(
-                                                "Failed to get location"),
-                                            actions: <Widget>[
-                                              TextButton(
-                                                onPressed: () => {
-                                                  Navigator.pop(context),
-                                                },
-                                                child: const Text('OK'),
+                                              }
+                                            else
+                                              {joinEVT(context)}
+                                          })
+                                      .catchError((error) => {
+                                            showDialog(
+                                              context: mcontext,
+                                              builder: (BuildContext context) =>
+                                                  AlertDialog(
+                                                title: Text("Failed"),
+                                                content: Text(
+                                                    "Failed to get location: " +
+                                                        error.toString()),
+                                                actions: <Widget>[
+                                                  TextButton(
+                                                    onPressed: () => {
+                                                      Navigator.pop(context),
+                                                    },
+                                                    child: const Text('OK'),
+                                                  ),
+                                                ],
                                               ),
-                                            ],
-                                          ),
-                                    )
-                                  });
-                                }else {
+                                            )
+                                          });
+                                } else {
                                   joinEVT(context);
                                 }
                               },
@@ -229,52 +307,43 @@ class Body extends StatelessWidget {
       )),
     );
   }
-  joinEVT(context){
+
+  joinEVT(context) {
     rest.joinEvent(code).then((value) => {
-                                      if (value.success)
-                                        {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    HomeScreen()),
-                                          )
-                                        }
-                                      else
-                                        {
-                                          showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) =>
-                                                  AlertDialog(
-                                                      title: Text(value.success
-                                                          ? "Success"
-                                                          : "Failed"),
-                                                      content:
-                                                          Text(value.message),
-                                                      actions: <Widget>[
-                                                        TextButton(
-                                                          onPressed: () => {
-                                                            if (value.success)
-                                                              {
-                                                                Navigator.push(
-                                                                  context,
-                                                                  MaterialPageRoute(
-                                                                      builder:
-                                                                          (context) =>
-                                                                              HomeScreen()),
-                                                                )
-                                                              }
-                                                            else
-                                                              {
-                                                                Navigator.pop(
-                                                                    context),
-                                                              }
-                                                          },
-                                                          child:
-                                                              const Text('OK'),
-                                                        ),
-                                                      ]))
-                                        }
-                                    });
+          if (value.success)
+            {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => HomeScreen()),
+              )
+            }
+          else
+            {
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) => AlertDialog(
+                          title: Text(value.success ? "Success" : "Failed"),
+                          content: Text(value.message),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () => {
+                                if (value.success)
+                                  {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => HomeScreen()),
+                                    )
+                                  }
+                                else
+                                  {
+                                    Navigator.pop(context),
+                                  }
+                              },
+                              child: const Text('OK'),
+                            ),
+                          ]))
+            }
+        });
   }
 }

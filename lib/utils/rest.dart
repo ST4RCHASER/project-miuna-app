@@ -479,6 +479,9 @@ class Event {
   Time time;
   int state;
   int qrType;
+  double loc_lat;
+  double loc_lng;
+  bool loc_check;
   String hash;
   String description;
   int iV;
@@ -491,6 +494,9 @@ class Event {
       this.state,
       this.qrType,
       this.hash,
+      this.loc_lat,
+      this.loc_lng,
+      this.loc_check,
       this.description,
       this.iV});
 
@@ -502,6 +508,9 @@ class Event {
     state = json['state'];
     qrType = json['qrType'];
     hash = json['hash'];
+    loc_lat = json['loc_lat'];
+    loc_lng = json['loc_lng'];
+    loc_check = json['loc_check'];
     description = json['description'];
     iV = json['__v'];
   }
@@ -514,6 +523,9 @@ class Event {
     if (this.time != null) {
       data['time'] = this.time.toJson();
     }
+    data['loc_lat'] = this.loc_lat;
+    data['loc_lng'] = this.loc_lng;
+    data['loc_check'] = this.loc_check;
     data['state'] = this.state;
     data['qrType'] = this.qrType;
     data['hash'] = this.hash;

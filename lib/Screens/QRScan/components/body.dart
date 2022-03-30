@@ -168,7 +168,7 @@ class _QRViewExampleState extends State<Body> {
         print(totp);
         print(data["totp"]);
         print("========");
-        if ((data["type"] == 1 || data["type"] == "1") && totp != data["totp"]) {
+        if ((data["type"] == 1 || data["type"] == "1") && totp != int.parse(data["totp"])) {
           print("This QRCode is expired");
           showDialog(
             context: context,
